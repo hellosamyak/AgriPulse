@@ -36,10 +36,6 @@ It provides a seamless interface for:
 | 🎨 **TailwindCSS + shadcn/ui** | Modern, sleek UI |
 | 🧩 **Lucide Icons / MUI Icons** | Icons for UX |
 | 🔗 **Axios** | Connects to backend APIs |
-| 🌙 **Dark/Light Mode** | Custom theme toggle |
 | 📱 **Responsive Design** | Mobile-first, modern layout |
 
 ---
-
-## 🏗️ Folder Structure
-

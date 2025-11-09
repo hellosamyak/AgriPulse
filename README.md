@@ -1,18 +1,37 @@
-# React + Vite
+# 🌾 AgriPulse Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> 🚀 *Empowering Indian farmers with AI-driven insights, market trends, and smart crop planning.*
 
-Currently, two official plugins are available:
+![Vite](https://img.shields.io/badge/Vite-frontend-blueviolet?logo=vite)
+![React](https://img.shields.io/badge/React-18-blue?logo=react)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.0-38BDF8?logo=tailwindcss)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## ✨ Overview
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+**AgriPulse** is a next-generation smart agriculture platform built for farmers and researchers.  
+The frontend provides a **beautiful, responsive, and fast dashboard** that connects with the backend to deliver:
 
-## Expanding the ESLint configuration
+- 🤖 **AI Chatbot:** Ask questions like *“What crop should I plant next month?”*
+- 🌱 **Disease Detection:** Upload leaf images for instant crop disease diagnosis.
+- ☀️ **Agri Dashboard:** Real-time weather, market prices, and AI insights.
+- 📈 **Agri Terminal:** Commodity trade analytics with **Buy/Sell/Hold** recommendations like the **Bloomberg Terminal**.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-# AgriPulse-frontend
-# AgriPulse
+---
+
+## 🧠 Tech Stack
+
+| Technology | Purpose |
+|-------------|----------|
+| ⚛️ **React 18 + Vite** | Fast SPA frontend |
+| 🎨 **TailwindCSS + shadcn/ui** | Modern, clean UI styling |
+| 🧩 **Lucide Icons / Material UI Icons** | Intuitive icons |
+| 🔗 **Axios** | API communication with backend |
+| 🌍 **Responsive Design** | Optimized for all devices |
+
+---
+
+## 🏗️ Folder Structure
+

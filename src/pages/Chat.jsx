@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import { Bot, Send, Loader2, Sprout, User } from "lucide-react";
+import { Bot, Send, Loader2, User } from "lucide-react";
+// Import the centralized API URL configuration
+import { API_BASE_URL } from "../frontend_config,";
 
 export default function Chat() {
   const [messages, setMessages] = useState([
@@ -29,7 +30,8 @@ export default function Chat() {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://127.0.0.1:8000/chat", {
+      // FIX APPLIED HERE: Using the globally configured API_BASE_URL
+      const res = await axios.post(`${API_BASE_URL}/chat`, {
         message: input,
       });
 
@@ -107,7 +109,7 @@ export default function Chat() {
               }`}
             >
               <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
+                // Removed remarkPlugins={[remarkGfm]} to resolve module error
                 components={{
                   p: ({ children }) => (
                     <p className="mb-2 text-slate-200 last:mb-0">{children}</p>

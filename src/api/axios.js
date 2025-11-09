@@ -5,7 +5,7 @@ const api = axios.create({
   baseURL:
     import.meta.env.MODE === "development"
       ? "http://127.0.0.1:8000"
-      : "https://agripulse-backend-9lur.onrender.com",
+      : "https://backend-agripulse.onrender.com",
 });
 
 export default api;

@@ -9,15 +9,22 @@
 
 ---
 
+## 🏆 Developed For
+
+> **AI Manthan – Hackathon at Acropolis Institute of Technology and Research (AITR), Indore**  
+> 🌱 *A project designed to bring AI-powered decision support to farmers across India.*
+
+---
+
 ## ✨ Overview
 
-**AgriPulse** is a next-generation smart agriculture platform built for farmers and researchers.  
-The frontend provides a **beautiful, responsive, and fast dashboard** that connects with the backend to deliver:
+**AgriPulse** is a next-generation smart agriculture platform that combines **AI, weather analytics, and real-time market data** to empower farmers and agri-businesses.
 
-- 🤖 **AI Chatbot:** Ask questions like *“What crop should I plant next month?”*
-- 🌱 **Disease Detection:** Upload leaf images for instant crop disease diagnosis.
-- ☀️ **Agri Dashboard:** Real-time weather, market prices, and AI insights.
-- 📈 **Agri Terminal:** Commodity trade analytics with **Buy/Sell/Hold** recommendations like the **Bloomberg Terminal**.
+It provides a seamless interface for:
+- 🤖 **AI Chatbot** – Ask “What should I grow next month?”
+- 🌿 **Disease Detection** – Upload leaf images for instant diagnosis.
+- ☀️ **Agri Dashboard** – Real-time mandi and weather trends.
+- 📈 **Agri Terminal** – Commodity trading insights with **Buy / Hold / Sell** recommendations like the Bloomberg Terminal, but for Agriculture.
 
 ---
 
@@ -25,11 +32,12 @@ The frontend provides a **beautiful, responsive, and fast dashboard** that conne
 
 | Technology | Purpose |
 |-------------|----------|
-| ⚛️ **React 18 + Vite** | Fast SPA frontend |
-| 🎨 **TailwindCSS + shadcn/ui** | Modern, clean UI styling |
-| 🧩 **Lucide Icons / Material UI Icons** | Intuitive icons |
-| 🔗 **Axios** | API communication with backend |
-| 🌍 **Responsive Design** | Optimized for all devices |
+| ⚛️ **React + Vite** | Frontend framework |
+| 🎨 **TailwindCSS + shadcn/ui** | Modern, sleek UI |
+| 🧩 **Lucide Icons / MUI Icons** | Icons for UX |
+| 🔗 **Axios** | Connects to backend APIs |
+| 🌙 **Dark/Light Mode** | Custom theme toggle |
+| 📱 **Responsive Design** | Mobile-first, modern layout |
 
 ---
 

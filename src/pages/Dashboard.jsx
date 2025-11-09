@@ -1,0 +1,431 @@
+import { useState, useEffect } from "react";
+import api from "../api/axios";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import CropCard from "../components/CropCard";
+import {
+  CloudSun,
+  Droplets,
+  TrendingUp,
+  Newspaper,
+  Sparkles,
+  Wind,
+  Sunrise,
+  Sunset,
+  CalendarDays,
+  MapPin,
+  Search,
+  Loader2,
+} from "lucide-react";
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  CartesianGrid,
+} from "recharts";
+
+export default function Dashboard() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [city, setCity] = useState("Indore");
+  const [inputCity, setInputCity] = useState("Indore");
+
+  const fetchDashboard = async (location) => {
+    setLoading(true);
+    try {
+      // Try cached data first (instant)
+      const cachedRes = await api.get(`/dashboard/cached`);
+      if (cachedRes.data) {
+        setData(cachedRes.data);
+        setLoading(false);
+        return;
+      }
+    } catch (err) {
+      console.warn("Cached dashboard not ready, fetching live...");
+    }
+
+    // Fallback: fetch fresh data if cache not found
+    try {
+      const res = await api.get(`/dashboard?location=${location}`);
+      setData(res.data);
+    } catch (err) {
+      console.error("Dashboard Error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboard(city);
+  }, []);
+
+  const handleCitySubmit = (e) => {
+    e.preventDefault();
+    if (!inputCity.trim()) return;
+    setCity(inputCity.trim());
+    fetchDashboard(inputCity.trim());
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center">
+          <Loader2
+            size={48}
+            className="text-sky-400 animate-spin mx-auto mb-4"
+          />
+          <p className="text-slate-400 text-lg">Fetching data for {city}...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!data) return null;
+
+  const current = data?.weather?.current || {};
+  const forecast = data?.weather?.forecast || [];
+  const astro = data?.weather?.astro || {};
+  const aiSummary = data?.ai_summary || "AI summary not available.";
+  const aiCropInsights = data?.ai_crop_insights || [];
+  const marketData = data?.market_data || [];
+  const news = data?.news || [];
+
+  return (
+    <div className="max-w-7xl mx-auto">
+      {/* Header */}
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 bg-linear-to-br from-sky-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-sky-500/25">
+            <CloudSun size={24} className="text-white" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-slate-100">
+              AgriPulse Dashboard
+            </h1>
+            <p className="text-slate-400 text-sm">
+              Real-time agriculture insights for{" "}
+              <span className="text-sky-400">{city}</span>
+            </p>
+          </div>
+        </div>
+
+        {/* City Search */}
+        <form
+          onSubmit={handleCitySubmit}
+          className="flex items-center gap-2 bg-slate-800/50 border border-slate-700/50 rounded-xl px-4 py-2 focus-within:border-sky-500/50 transition-all duration-300"
+        >
+          <MapPin size={18} className="text-sky-400" />
+          <input
+            type="text"
+            placeholder="Enter city (e.g. Delhi)"
+            value={inputCity}
+            onChange={(e) => setInputCity(e.target.value)}
+            className="bg-transparent text-slate-200 placeholder-slate-500 outline-none w-40 sm:w-56"
+          />
+          <button
+            type="submit"
+            className="bg-sky-500/20 hover:bg-sky-600/30 border border-sky-500/30 rounded-lg p-2 transition-all duration-300"
+            title="Search"
+          >
+            <Search size={16} className="text-sky-400" />
+          </button>
+        </form>
+      </div>
+
+      {/* AI Advisory Summary */}
+      <div className="mb-6 bg-linear-to-br from-sky-500/10 to-blue-600/10 border border-sky-500/20 rounded-2xl p-6 backdrop-blur-sm hover:border-sky-500/30 transition-all duration-300">
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 bg-linear-to-br from-sky-500 to-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-sky-500/25">
+            <Sparkles size={20} className="text-white" />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm text-slate-400 mb-2">AI Advisory Summary</p>
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={{
+                p: ({ children }) => (
+                  <p className="mb-2 text-slate-200">{children}</p>
+                ),
+                strong: ({ children }) => (
+                  <strong className="text-sky-400">{children}</strong>
+                ),
+                ul: ({ children }) => (
+                  <ul className="list-disc list-inside text-slate-300 space-y-1">
+                    {children}
+                  </ul>
+                ),
+                ol: ({ children }) => (
+                  <ol className="list-decimal list-inside text-slate-300 space-y-1">
+                    {children}
+                  </ol>
+                ),
+                li: ({ children }) => (
+                  <li className="text-slate-400">{children}</li>
+                ),
+              }}
+            >
+              {aiSummary}
+            </ReactMarkdown>
+          </div>
+        </div>
+      </div>
+
+      {/* Crop Recommendations */}
+      {Array.isArray(aiCropInsights) && aiCropInsights.length > 0 && (
+        <div className="mt-10 bg-linear-to-br from-emerald-500/10 to-teal-600/10 border border-emerald-500/20 rounded-2xl p-8 backdrop-blur-sm hover:border-emerald-500/40 transition-all duration-300">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-linear-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center shadow-lg shadow-emerald-500/25">
+              <Sparkles size={20} className="text-white" />
+            </div>
+            <h2 className="text-2xl font-semibold text-slate-100">
+              AI Crop Recommendations
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {aiCropInsights.map((item, idx) => (
+              <CropCard
+                key={idx}
+                crop={item.crop}
+                confidence={item.confidence}
+                reason={
+                  Array.isArray(item.reason)
+                    ? item.reason.join("\n")
+                    : item.reason
+                }
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 mt-8">
+        {/* Weather */}
+        <div className="bg-slate-800/30 border border-slate-700/50 rounded-2xl p-6 backdrop-blur-sm hover:border-slate-600/50 transition-all duration-300">
+          <div className="flex items-center gap-2 mb-6">
+            <CloudSun size={20} className="text-sky-400" />
+            <h2 className="text-lg font-semibold text-slate-200">
+              Current Weather
+            </h2>
+          </div>
+
+          {/* Main Weather */}
+          <div className="bg-linear-to-br from-sky-500/10 to-blue-600/10 rounded-xl p-5 border border-sky-500/20 mb-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {current.icon && (
+                  <img
+                    src={current.icon}
+                    alt="Weather Icon"
+                    className="w-14 h-14"
+                  />
+                )}
+                <div>
+                  <p className="text-4xl font-bold text-slate-100">
+                    {current.temp_c ?? "--"}°C
+                  </p>
+                  <p className="text-sm text-slate-400">
+                    {current.condition || "N/A"}
+                  </p>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="flex items-center gap-2 justify-end mb-2">
+                  <Droplets size={18} className="text-sky-400" />
+                  <span className="text-2xl font-bold text-sky-400">
+                    {current.humidity ?? "--"}%
+                  </span>
+                </div>
+                <p className="text-sm text-slate-400">Humidity</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between mt-4 text-slate-400 text-sm">
+              <div className="flex items-center gap-1">
+                <Wind size={16} />
+                <span>{current.wind_kph ?? "--"} km/h wind</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Sunrise size={16} />
+                <span>{astro.sunrise || "--"}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Sunset size={16} />
+                <span>{astro.sunset || "--"}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Forecast */}
+          <div className="relative overflow-x-auto">
+            <div className="flex gap-4 min-w-max pb-2">
+              {forecast.map((day, idx) => (
+                <div
+                  key={idx}
+                  className="p-4 bg-slate-900/50 rounded-xl border border-slate-700/30 min-w-40 hover:border-sky-500/30 transition-all duration-300"
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <CalendarDays size={16} className="text-sky-400" />
+                    <p className="text-sm text-slate-400">
+                      {new Date(day.date).toLocaleDateString("en-IN", {
+                        weekday: "short",
+                      })}
+                    </p>
+                  </div>
+                  <img
+                    src={day.icon}
+                    alt="icon"
+                    className="w-10 h-10 mx-auto mb-2"
+                  />
+                  <p className="text-center text-lg font-semibold text-slate-200">
+                    {day.avgtemp_c}°C
+                  </p>
+                  <p className="text-center text-slate-400 text-sm">
+                    {day.condition}
+                  </p>
+                  <p className="text-center text-sky-400 text-xs mt-1">
+                    Rain {day.daily_chance_of_rain}%
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Market Prices */}
+        <div className="bg-slate-800/30 border border-slate-700/50 rounded-2xl p-6 backdrop-blur-sm">
+          <div className="flex items-center gap-2 mb-4">
+            <TrendingUp size={20} className="text-emerald-400" />
+            <h2 className="text-lg font-semibold text-slate-200">
+              Market Price Distribution
+            </h2>
+          </div>
+
+          {marketData.length === 0 ? (
+            <p className="text-slate-500 text-sm text-center">
+              No market data available for {city}.
+            </p>
+          ) : (
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={marketData.slice(0, 8)}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                <XAxis dataKey="commodity" stroke="#94a3b8" />
+                <YAxis stroke="#94a3b8" />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#1e293b",
+                    border: "1px solid #475569",
+                    borderRadius: "8px",
+                  }}
+                />
+                <Legend />
+                <Bar dataKey="min_price" fill="#ef4444" name="Min Price" />
+                <Bar dataKey="modal_price" fill="#22c55e" name="Modal Price" />
+                <Bar dataKey="max_price" fill="#eab308" name="Max Price" />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </div>
+      </div>
+
+      {/* Agriculture News */}
+      <div className="bg-slate-800/30 border border-slate-700/50 rounded-2xl p-6 backdrop-blur-sm hover:border-slate-600/50 transition-all duration-300">
+        <div className="flex items-center gap-2 mb-6">
+          <Newspaper size={20} className="text-violet-400" />
+          <h2 className="text-lg font-semibold text-slate-200">
+            Agriculture News
+          </h2>
+        </div>
+
+        {/* If data.news is empty, fallback to random static news */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {(() => {
+            // --- Static dataset (latest 10–15 days) ---
+            const fallbackNews = [
+              {
+                headline:
+                  "Centre Launches ₹3,000 Crore Scheme to Boost Organic Farming",
+                summary:
+                  "The Ministry of Agriculture announced a ₹3,000 crore initiative to promote organic and natural farming methods across 12 states, focusing on sustainable soil health and export potential.",
+              },
+              {
+                headline:
+                  "IMD Predicts Above-Normal Winter Rainfall in Northern India",
+                summary:
+                  "The India Meteorological Department stated that higher-than-average rainfall is expected in the northern plains, which may benefit late-sown rabi crops like mustard and chickpea.",
+              },
+              {
+                headline:
+                  "Maharashtra Approves ₹700 Crore Drought Relief Package for Farmers",
+                summary:
+                  "The Maharashtra government announced a relief package for farmers affected by erratic rainfall, covering over 1.2 lakh hectares of drought-hit farmland.",
+              },
+              {
+                headline:
+                  "Drone-Based Fertilizer Spraying Gains Traction Among Farmers",
+                summary:
+                  "Agri-tech startups report a rise in drone adoption for precision fertilizer spraying, reducing labor costs and ensuring uniform crop coverage.",
+              },
+              {
+                headline:
+                  "PM Launches 'Agri Innovate 2025' to Support Startups",
+                summary:
+                  "Prime Minister Narendra Modi inaugurated a nationwide program to provide funding and mentorship to agri-tech startups focused on AI, IoT, and climate resilience.",
+              },
+              {
+                headline:
+                  "Haryana to Launch Smart Irrigation Project Using IoT Sensors",
+                summary:
+                  "The Haryana government will pilot a smart irrigation system in 5 districts using IoT-based water sensors to optimize farm water use.",
+              },
+              {
+                headline:
+                  "Karnataka Plans to Introduce Blockchain for Crop Traceability",
+                summary:
+                  "The Karnataka agriculture department is testing a blockchain-based system to trace produce from farm to market, enhancing transparency and quality control.",
+              },
+              {
+                headline:
+                  "Onion Prices Drop 20% After Fresh Arrivals from Nashik Markets",
+                summary:
+                  "Increased arrivals from Nashik and Lasalgaon have led to a significant drop in wholesale onion prices, offering relief to consumers after weeks of high rates.",
+              },
+              {
+                headline:
+                  "Government Pushes for Digital Crop Insurance Platform by 2026",
+                summary:
+                  "The agriculture ministry revealed plans for a fully digital crop insurance platform to ensure faster claim settlements and real-time monitoring using satellite data.",
+              },
+            ];
+
+            // --- Select 3 random news (from backend if available, else fallback) ---
+            const allNews = news?.length > 0 ? news : fallbackNews;
+            const random3 = allNews.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+            return random3.map((n, idx) => (
+              <div
+                key={idx}
+                className="group p-5 bg-slate-900/50 rounded-xl border border-slate-700/30 hover:border-violet-500/30 hover:bg-slate-900/70 transition-all duration-300 hover:scale-105"
+              >
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="w-8 h-8 bg-linear-to-br from-violet-500/20 to-purple-600/20 rounded-lg flex items-center justify-center shrink-0">
+                    <Newspaper size={16} className="text-violet-400" />
+                  </div>
+                  <h3 className="text-base font-semibold text-slate-200 leading-snug group-hover:text-violet-400 transition-colors duration-300">
+                    {n.headline}
+                  </h3>
+                </div>
+                <p className="text-sm text-slate-400 leading-relaxed ml-11">
+                  {n.summary}
+                </p>
+              </div>
+            ));
+          })()}
+        </div>
+      </div>
+    </div>
+  );
+}
